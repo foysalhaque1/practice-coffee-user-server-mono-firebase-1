@@ -68,6 +68,29 @@ async function run() {
 
         });
         //user api
+        app.get('/users',async(req,res)=>{
+            const result = await usersCollections.find().toArray();
+            res.send(result);
+        });
+        app.patch('/users',async(req,res)=>{
+            const {email,lastSignInTime} = req.body;
+            // console.log(user)
+            const filter = {email:email};
+            const updatedDoc = {
+                $set:{
+                    lastSignInTime:lastSignInTime
+                }
+            }
+            const result = await usersCollections.updateOne(filter,updatedDoc);
+            res.send(result)
+        })
+
+        app.delete('/users/:id',async(req,res)=>{
+            const id = req.params.id;
+            const query = {_id:new ObjectId(id)};
+            const result = await usersCollections.deleteOne(query);
+            res.send(result)
+        })
         app.post('/users',async(req,res)=>{
             const user = req.body;
             const result = await usersCollections.insertOne(user);
